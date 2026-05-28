@@ -349,6 +349,11 @@
       keysTableBody: document.getElementById('keysTableBody')
     };
 
+    // ตรวจจับและกรอก URL ของเซิร์ฟเวอร์โดยอัตโนมัติหากรันตรงบน Render เพื่ออำนวยความสะดวกและขจัดปัญหาพิมพ์ผิด
+    if (window.location.protocol.startsWith('http')) {
+      el.serverUrl.value = window.location.origin;
+    }
+
     // Auto update days value when key type changes
     el.selectKeyType.addEventListener('change', () => {
       const type = el.selectKeyType.value;
