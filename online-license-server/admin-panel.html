@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopFlow Automate Pro — แดชบอร์ดแอดมิน (Admin License Manager)</title>
+  <style>
+    :root {
+      --bg: #0b0c16;
+      --card-bg: #141627;
+      --accent-red: #ff2d55;
+      --accent-purple: #a855f7;
+      --accent-cyan: #00d4ff;
+      --accent-green: #00e676;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --border: rgba(255,255,255,0.08);
+      --grad: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-purple) 50%, var(--accent-cyan) 100%);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 40px 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: white;
+      font-size: 0.95em;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent-purple);
+      box-shadow: 0 0 0 3px rgba(168,85,247,0.15);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.95em;
+    }
+
+    .btn--primary {
+      background: var(--grad);
+      color: white;
+    }
+
+    .btn--primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn--secondary {
+      background: rgba(255,255,255,0.06);
+      color: white;
+      border: 1px solid var(--border);
+    }
+
+    .btn--secondary:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .btn--danger {
+      background: var(--accent-red);
+      color: white;
+    }
+
+    .btn--danger:hover {
+      opacity: 0.9;
+    }
+
+    .btn--sm {
+      padding: 6px 12px;
+      font-size: 0.8em;
+      border-radius: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    td {
+      font-size: 0.92em;
+    }
+
+    .key-badge {
+      font-family: monospace;
+      background: rgba(0, 212, 255, 0.1);
+      color: var(--accent-cyan);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1.05em;
+    }
+
+    .status-badge {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+
+    .status-badge--active { background: rgba(0, 230, 118, 0.15); color: var(--accent-green); }
+    .status-badge--pending { background: rgba(255, 255, 255, 0.08); color: var(--text-muted); }
+    
+    .type-badge {
+      font-size: 0.8em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .type-badge--trial { background: #3b82f6; color: white; }
+    .type-badge--monthly { background: #eab308; color: black; }
+    .type-badge--lifetime { background: #a855f7; color: white; }
+
+    .result-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(0, 230, 118, 0.1);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      border-radius: 8px;
+      display: none;
+    }
+
+    .result-key {
+      font-size: 1.4rem;
+      font-family: monospace;
+      color: var(--accent-green);
+      font-weight: bold;
+      margin-top: 8px;
+      letter-spacing: 1px;
+      word-break: break-all;
+      background: rgba(0,0,0,0.2);
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.85em;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>ShopFlow Automate Pro</h1>
+      <p style="color: var(--text-muted);">ระบบบริหารจัดการใบอนุญาตไลเซนส์คีย์ออนไลน์สำหรับผู้พัฒนา (คุณ SITTH)</p>
+    </header>
+
+    <!-- SERVER CONFIGURATION CARD -->
+    <div class="card">
+      <h3 style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">📡 การตั้งค่าเซิร์ฟเวอร์เช็คสิทธิ์</h3>
+      <div class="grid-2" style="grid-template-columns: 2fr 1.5fr 1fr;">
+        <div>
+          <label>🌐 ลิงก์ API เซิร์ฟเวอร์ออนไลน์ (Server URL)</label>
+          <input type="text" id="inputServerUrl" value="http://localhost:5000" placeholder="https://your-server.render.com">
+        </div>
+        <div>
+          <label>🤫 รหัสผ่านแอดมิน (Admin API Key)</label>
+          <input type="password" id="inputAdminSecret" value="ShopFlowAdminSecretKey2026!!!" placeholder="ป้อนรหัสแอดมิน...">
+        </div>
+        <div style="display: flex; align-items: flex-end;">
+          <button class="btn btn--secondary" id="btnConnect" style="width: 100%; height: 48px;">🔄 เชื่อมต่อซิงค์</button>
+        </div>
+      </div>
+      <p style="font-size: 0.82em; color: var(--text-muted); margin-top: 10px;">
+        * หากรันเช็คสิทธิ์ในเครื่องคอมให้ใช้ `http://localhost:5000` หากอัปโหลดเซิร์ฟเวอร์ขึ้นเน็ตของ Render/Vercel แล้ว ให้เอาลิงก์ออนไลน์มาป้อน
+      </p>
+    </div>
+
+    <div class="grid-2">
+      <!-- CREATE KEY CARD -->
+      <div class="card" style="margin-bottom: 0;">
+        <h3 style="margin-bottom: 20px;">⚡ สร้างใบอนุญาตคีย์ใหม่ (Create License Key)</h3>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div>
+            <label>🏷️ เลือกประเภทคีย์ใช้งาน</label>
+            <select id="selectKeyType">
+              <option value="trial">คีย์ทดลองฟรี 7 วัน (trial)</option>
+              <option value="monthly" selected>คีย์รายเดือน 30 วัน (monthly)</option>
+              <option value="lifetime">คีย์ถาวรตลอดชีพ (lifetime)</option>
+            </select>
+          </div>
+          <div>
+            <label>📅 จำนวนวันเปิดใช้งาน (เฉพาะกรณีคีย์ทดลอง/รายเดือน)</label>
+            <input type="number" id="inputDurationDays" value="30" min="1">
+          </div>
+          <button class="btn btn--primary" id="btnGenerate" style="margin-top: 10px;">
+            <span>⚡ เจเนอเรตคีย์ใหม่</span>
+          </button>
+
+          <!-- GENERATE RESULT BOX -->
+          <div class="result-box" id="resultBox">
+            <span style="font-size: 0.85em; font-weight: bold; color: var(--accent-green);">🎉 สร้างคีย์ออนไลน์และคัดลอกลงคลิปบอร์ดแล้ว!</span>
+            <div class="result-key" id="resultKeyText">SF-ABCD-EFGH</div>
+            <p style="font-size: 0.8em; color: var(--text-muted); margin-top: 8px;" id="resultKeyDetail">ประเภท: รายเดือน · หมดอายุ: --</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- BULK INSTRUCTION CARD -->
+      <div class="card" style="margin-bottom: 0; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <h3 style="margin-bottom: 16px;">📖 คำแนะนำการทำงาน</h3>
+          <p style="font-size: 0.9em; color: var(--text-muted); margin-bottom: 12px; line-height: 1.6;">
+            1. <strong>สร้างคีย์ใช้งาน:</strong> เลือกประเภทคีย์ที่ต้องการจำหน่ายให้ลูกค้า กรอกวัน และกดปุ่มสีม่วง ระบบจะคัดลอกคีย์สั้น เช่น <code style="color:var(--accent-cyan)">SF-XXXX-XXXX</code> ส่งให้ลูกค้าทันที
+          </p>
+          <p style="font-size: 0.9em; color: var(--text-muted); margin-bottom: 12px; line-height: 1.6;">
+            2. <strong>การย้ายเครื่องของลูกค้า:</strong> ลูกค้าสามารถกดปุ่ม "ถอนสิทธิ์เครื่องเก่า" ในโปรแกรมเพื่อย้ายเครื่องได้เองทันที หากเขาทำไม่ได้ แอดมินสามารถกดปุ่ม <code style="color:var(--accent-cyan)">🔓 ปลดล็อคเครื่อง</code> ในรายการด้านล่างเพื่อแก้ปัญหาแมนนวลได้
+          </p>
+          <p style="font-size: 0.9em; color: var(--text-muted); line-height: 1.6;">
+            3. <strong>การลบคีย์:</strong> หากลูกค้าหมดอายุหรือยกเลิกการชำระเงิน ให้กดปุ่มถังขยะสีแดงเพื่อระงับสิทธิ์การใช้งานบอทได้ทันที
+          </p>
+        </div>
+        <div style="background: rgba(255, 45, 85, 0.08); border: 1px solid rgba(255, 45, 85, 0.2); padding: 12px; border-radius: 8px; font-size: 0.85em;">
+          🔒 <strong>รหัสผ่านแอดมิน (Admin API Key):</strong> กรุณาเก็บเป็นความลับสูงสุด หากคนอื่นล่วงรู้จะสามารถเจนคีย์บอทใช้เองฟรีได้
+        </div>
+      </div>
+    </div>
+
+    <!-- LICENSE LIST CARD -->
+    <div class="card" style="margin-top: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3>🔑 รายการคีย์ใบอนุญาตทั้งหมดในระบบ (<span id="keyCountText">0</span> คีย์)</h3>
+        <button class="btn btn--secondary btn--sm" id="btnRefresh">🔄 โหลดตารางใหม่</button>
+      </div>
+      
+      <div style="overflow-x: auto;">
+        <table id="keysTable">
+          <thead>
+            <tr>
+              <th>ใบอนุญาต (License Key)</th>
+              <th>ประเภท</th>
+              <th>สถานะเครื่องผูก</th>
+              <th>วันหมดอายุคีย์</th>
+              <th style="text-align: center;">ควบคุมระบบ</th>
+            </tr>
+          </thead>
+          <tbody id="keysTableBody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-muted);">กรุณากดปุ่ม "เชื่อมต่อซิงค์" ด้านบนเพื่อดึงข้อมูลคีย์</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      ShopFlow Automate Pro © 2026 Admin Dashboard · Security System Option B
+    </div>
+  </div>
+
+  <script>
+    // CACHED ELEMENTS
+    const el = {
+      serverUrl: document.getElementById('inputServerUrl'),
+      adminSecret: document.getElementById('inputAdminSecret'),
+      btnConnect: document.getElementById('btnConnect'),
+      selectKeyType: document.getElementById('selectKeyType'),
+      inputDurationDays: document.getElementById('inputDurationDays'),
+      btnGenerate: document.getElementById('btnGenerate'),
+      resultBox: document.getElementById('resultBox'),
+      resultKeyText: document.getElementById('resultKeyText'),
+      resultKeyDetail: document.getElementById('resultKeyDetail'),
+      keyCountText: document.getElementById('keyCountText'),
+      btnRefresh: document.getElementById('btnRefresh'),
+      keysTableBody: document.getElementById('keysTableBody')
+    };
+
+    // Auto update days value when key type changes
+    el.selectKeyType.addEventListener('change', () => {
+      const type = el.selectKeyType.value;
+      if (type === 'trial') el.inputDurationDays.value = 7;
+      else if (type === 'monthly') el.inputDurationDays.value = 30;
+      else if (type === 'lifetime') el.inputDurationDays.value = 36500;
+    });
+
+    // API REQUEST UTILITY
+    async function apiRequest(endpoint, payload = {}, method = 'POST') {
+      const url = el.serverUrl.value.trim();
+      const secret = el.adminSecret.value.trim();
+      
+      const options = {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${secret}`
+        }
+      };
+
+      if (method !== 'GET') {
+        options.body = JSON.stringify({ ...payload, adminSecret: secret });
+      }
+
+      try {
+        const res = await fetch(`${url}${endpoint}`, options);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return await res.json();
+      } catch (err) {
+        alert(`❌ เชื่อมต่อเซิร์ฟเวอร์ล้มเหลว: ${err.message}\n\nกรุณาตรวจสอบว่าเซิร์ฟเวอร์หลังบ้านรันอยู่หรือไม่ หรือ URL ถูกต้องหรือไม่`);
+        return null;
+      }
+    }
+
+    // REFRESH / LIST KEYS
+    async function refreshKeysList() {
+      const res = await apiRequest('/admin/keys', {}, 'GET');
+      if (res && res.success) {
+        el.keyCountText.textContent = res.count || 0;
+        el.keysTableBody.innerHTML = '';
+        
+        if (res.keys.length === 0) {
+          el.keysTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">📭 ยังไม่มีคีย์ลงทะเบียนในระบบ สั่งบิวด์ได้ที่ฟอร์มด้านบน</td></tr>`;
+          return;
+        }
+
+        res.keys.reverse().forEach(k => {
+          const row = document.createElement('tr');
+          
+          const typeLabels = { trial: 'ทดลอง 7 วัน', monthly: 'รายเดือน', lifetime: 'ตลอดชีพ' };
+          const typeTh = typeLabels[k.type] || k.type;
+          
+          const isActivated = k.machineId !== null;
+          const statusText = isActivated ? `🟢 ผูกเครื่อง: ${k.machineId.substring(0, 15)}...` : `⚪ ยังไม่เปิดใช้งาน`;
+          const statusClass = isActivated ? 'status-badge--active' : 'status-badge--pending';
+          
+          const expDate = new Date(k.expiresAt).toLocaleDateString('th-TH');
+          const expTh = k.type === 'lifetime' ? 'ตลอดชีพ (ถาวร)' : expDate;
+
+          row.innerHTML = `
+            <td><span class="key-badge">${k.key}</span></td>
+            <td><span class="type-badge type-badge--${k.type}">${typeTh}</span></td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>${expTh}</td>
+            <td style="text-align: center; display: flex; gap: 8px; justify-content: center;">
+              <button class="btn btn--secondary btn--sm btn-reset" data-key="${k.key}" ${!isActivated ? 'disabled style="opacity:0.3;"' : ''}>🔓 ปลดล็อคเครื่อง</button>
+              <button class="btn btn--danger btn--sm btn-delete" data-key="${k.key}">🗑️ ระงับ</button>
+            </td>
+          `;
+
+          // BIND BUTTON EVENTS
+          row.querySelector('.btn-reset').addEventListener('click', () => resetKeyHwid(k.key));
+          row.querySelector('.btn-delete').addEventListener('click', () => deleteKey(k.key));
+
+          el.keysTableBody.appendChild(row);
+        });
+      }
+    }
+
+    // GENERATE KEY ACTION
+    el.btnGenerate.addEventListener('click', async () => {
+      const type = el.selectKeyType.value;
+      const days = parseInt(el.inputDurationDays.value);
+      
+      const btn = el.btnGenerate;
+      btn.disabled = true;
+      btn.textContent = '⏳ กำลังบันทึกออนไลน์...';
+
+      const res = await apiRequest('/admin/create-key', { type, days });
+      
+      btn.disabled = false;
+      btn.textContent = '⚡ เจเนอเรตคีย์ใหม่';
+
+      if (res && res.success) {
+        const k = res.data;
+        el.resultBox.style.display = 'block';
+        el.resultKeyText.textContent = k.key;
+        
+        const expDate = new Date(k.expiresAt).toLocaleDateString('th-TH');
+        const typeLabels = { trial: 'ทดลองใช้งาน', monthly: 'รายเดือน', lifetime: 'ตลอดชีพถาวร' };
+        el.resultKeyDetail.textContent = `ประเภท: ${typeLabels[k.type]} · หมดอายุ: ${k.type === 'lifetime' ? 'ตลอดชีพ (ถาวร)' : expDate}`;
+        
+        // Copy generated key to clipboard automatically
+        navigator.clipboard.writeText(k.key);
+        
+        refreshKeysList();
+      }
+    });
+
+    // RESET HWID ACTION
+    async function resetKeyHwid(key) {
+      if (confirm(`คุณต้องการปลดล็อกรหัสเครื่องคอมสำหรับคีย์ ${key} ใช่หรือไม่?\n\nลูกค้าจะสามารถย้ายคีย์นี้ไปรันเครื่องอื่นได้ทันที`)) {
+        const res = await apiRequest('/admin/reset-key', { key });
+        if (res && res.success) {
+          alert(res.message);
+          refreshKeysList();
+        }
+      }
+    }
+
+    // DELETE KEY ACTION
+    async function deleteKey(key) {
+      if (confirm(`⚠️ คำเตือน: คุณต้องการลบระงับคีย์ ${key} ใช่หรือไม่?\n\nสิทธิ์การใช้งานบอทของลูกค้ารายนี้จะหมดไปในทันทีและไม่สามารถเปิดใช้งานต่อได้`)) {
+        const res = await apiRequest('/admin/delete-key', { key });
+        if (res && res.success) {
+          alert(res.message);
+          refreshKeysList();
+        }
+      }
+    }
+
+    // CONNECT / REFRESH
+    el.btnConnect.addEventListener('click', () => {
+      refreshKeysList();
+    });
+    el.btnRefresh.addEventListener('click', () => {
+      refreshKeysList();
+    });
+
+    // Initial Load if server is local and running
+    setTimeout(() => {
+      refreshKeysList();
+    }, 500);
+
+  </script>
+</body>
+</html>
